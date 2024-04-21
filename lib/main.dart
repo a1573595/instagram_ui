@@ -7,81 +7,68 @@ import 'package:instagram_ui/page/favorite_page.dart';
 import 'package:instagram_ui/page/home_page.dart';
 import 'package:instagram_ui/page/search_page.dart';
 
-void main() => runApp(const ProviderScope(
-  child: MaterialApp(
-    title: 'Instagram',
-    home: FirstPage(),
-  ),
-));
+void main() {
+  runApp(ProviderScope(
+    child: MaterialApp(
+      title: 'Instagram',
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+        ),
+      ),
+      home: const ViewPagerPage(),
+    ),
+  ));
+}
 
-final currentPosition = StateProvider((ref) => 0);
+final currentPosition = StateProvider.autoDispose((ref) => 0);
 
-class FirstPage extends HookConsumerWidget {
-  const FirstPage({super.key});
+class ViewPagerPage extends HookConsumerWidget {
+  const ViewPagerPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final controller = usePageController();
-
-    final page = useMemoized(() => const [
-      HomePage(),
-      SearchPage(),
-      AddPage(),
-      FavoritePage(),
-      AccountPage(),
-    ]);
 
     ref.listen(currentPosition, (previous, next) {
       controller.jumpToPage(next);
     });
 
     return Scaffold(
-      body: PageView.builder(
-        physics: const NeverScrollableScrollPhysics(),
+      body: PageView(
         controller: controller,
-        itemCount: page.length,
-        itemBuilder: (context, index) => page[index],
+        physics: const NeverScrollableScrollPhysics(),
+        children: const [
+          HomePage(),
+          SearchPage(),
+          AddPage(),
+          FavoritePage(),
+          AccountPage(),
+        ],
       ),
-      bottomNavigationBar: const _BottomNavigationBar(),
+      bottomNavigationBar: const _BottomNavigationBarItem(),
     );
   }
 }
 
-class _BottomNavigationBar extends ConsumerWidget {
-  const _BottomNavigationBar({super.key});
+class _BottomNavigationBarItem extends ConsumerWidget {
+  const _BottomNavigationBarItem({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return BottomNavigationBar(
       currentIndex: ref.watch(currentPosition),
+      type: BottomNavigationBarType.fixed,
       showSelectedLabels: false,
       showUnselectedLabels: false,
-      selectedItemColor: Colors.grey,
-      unselectedItemColor: Colors.black,
-      type: BottomNavigationBarType.fixed,
       items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          label: "Home",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.search),
-          label: "Search",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.add_box),
-          label: "Add",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.favorite),
-          label: "Favorite",
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.account_box),
-          label: "Account",
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
+        BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
+        BottomNavigationBarItem(icon: Icon(Icons.add_circle_outlined), label: "Add"),
+        BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favorite"),
+        BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: "Account"),
       ],
-      onTap: (index) => ref.read(currentPosition.notifier).update((state) => index),
+      onTap: (value) => ref.read(currentPosition.notifier).update((state) => value),
     );
   }
 }

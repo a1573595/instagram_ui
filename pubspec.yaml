@@ -32,6 +32,7 @@ dependencies:
     sdk: flutter
 
   animations: ^2.0.11
+  cached_network_image: ^3.3.1
   collection: ^1.18.0
   cupertino_icons: ^1.0.8
   flutter_hooks: ^0.20.5
@@ -48,6 +49,8 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^3.0.0
+  build_runner:
+  flutter_gen_runner:
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

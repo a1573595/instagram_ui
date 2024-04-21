@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:instagram_ui/gen/assets.gen.dart';
@@ -103,7 +104,6 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         backgroundColor: Colors.black12,
         leading: IconButton(
           onPressed: () {},
@@ -117,33 +117,14 @@ class HomePage extends StatelessWidget {
           IconButton(
             onPressed: () {},
             icon: const Icon(Icons.send),
-          )
+          ),
         ],
       ),
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
           const SliverToBoxAdapter(
-            child: HomeHeader(),
-          ),
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: MediaQuery.sizeOf(context).radius * .25,
-              width: double.infinity,
-              child: ListView.separated(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.all(8),
-                scrollDirection: Axis.horizontal,
-                itemCount: storyList.length,
-                itemBuilder: (context, index) => StoryItem(
-                  storyList[index],
-                  key: ValueKey(index),
-                ),
-                separatorBuilder: (context, index) => const SizedBox(
-                  width: 8,
-                ),
-              ),
-            ),
+            child: _HomeHeader(),
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
@@ -160,33 +141,55 @@ class HomePage extends StatelessWidget {
   }
 }
 
-class HomeHeader extends StatelessWidget {
-  const HomeHeader({super.key});
+class _HomeHeader extends StatelessWidget {
+  const _HomeHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        children: [
-          Text(
-            "Stories",
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            children: [
+              Text(
+                "Stories",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+              const Spacer(),
+              const Icon(Icons.arrow_right),
+              Text(
+                "Watch All",
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
-          const Spacer(),
-          const Icon(Icons.play_arrow),
-          Text(
-            "Watch All",
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold),
+        ),
+        SizedBox(
+          height: MediaQuery.sizeOf(context).radius * 0.25,
+          width: double.infinity,
+          child: ListView.separated(
+            physics: const BouncingScrollPhysics(),
+            padding: const EdgeInsets.all(8),
+            scrollDirection: Axis.horizontal,
+            itemCount: storyList.length,
+            itemBuilder: (context, index) => _StoryItem(
+              storyList[index],
+              key: ValueKey(index),
+            ),
+            separatorBuilder: (context, index) => const SizedBox(
+              width: 8,
+            ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-class StoryItem extends StatelessWidget {
-  const StoryItem(this.story, {super.key});
+class _StoryItem extends StatelessWidget {
+  const _StoryItem(this.story, {super.key});
 
   final Story story;
 
@@ -199,13 +202,10 @@ class StoryItem extends StatelessWidget {
             Expanded(
               child: Stack(
                 children: [
-                  AspectRatio(
-                    aspectRatio: 1,
-                    child: _CircleGradientBorder(
-                      child: Image.network(
-                        story.userImage,
-                        fit: BoxFit.cover,
-                      ),
+                  _CircleBorderContainer(
+                    child: CachedNetworkImage(
+                      imageUrl: story.userImage,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   Positioned(
@@ -252,7 +252,7 @@ class ArtistItem extends HookWidget {
   Widget build(BuildContext context) {
     final isFavorite = useState(false);
 
-    final size = useMemoized(() => MediaQuery.sizeOf(context));
+    final radius = useMemoized(() => MediaQuery.sizeOf(context).radius);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -267,11 +267,11 @@ class ArtistItem extends HookWidget {
           child: Row(
             children: [
               SizedBox(
-                height: size.radius * .1,
-                width: size.radius * .1,
-                child: _CircleGradientBorder(
-                  child: Image.network(
-                    artist.authorImage,
+                height: radius * .1,
+                width: radius * .1,
+                child: _CircleBorderContainer(
+                  child: CachedNetworkImage(
+                    imageUrl: artist.authorImage,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -288,37 +288,37 @@ class ArtistItem extends HookWidget {
               IconButton(
                 onPressed: () {},
                 icon: const Icon(Icons.more_horiz),
-              )
+              ),
             ],
           ),
         ),
-        Image.network(artist.artistImage),
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: () => isFavorite.value = !isFavorite.value,
-                icon: Icon(
-                  isFavorite.value ? Icons.favorite : Icons.favorite_border,
-                  color: isFavorite.value ? Colors.red : null,
-                ),
+        CachedNetworkImage(
+          imageUrl: artist.artistImage,
+          fit: BoxFit.cover,
+        ),
+        Row(
+          children: [
+            IconButton(
+              onPressed: () => isFavorite.value = !isFavorite.value,
+              icon: Icon(
+                isFavorite.value ? Icons.favorite : Icons.favorite_border,
+                color: isFavorite.value ? Colors.red : null,
               ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.insert_comment_outlined),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.send),
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.bookmark_border),
-              ),
-            ],
-          ),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.insert_comment_outlined),
+            ),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.send),
+            ),
+            const Spacer(),
+            IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.bookmark_border),
+            ),
+          ],
         ),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -331,7 +331,9 @@ class ArtistItem extends HookWidget {
                 ),
                 TextSpan(
                   text: "Someone, Someone",
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
                 TextSpan(
                   text: " and ",
@@ -339,7 +341,9 @@ class ArtistItem extends HookWidget {
                 ),
                 TextSpan(
                   text: "528,331 others",
-                  style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ],
             ),
@@ -356,7 +360,7 @@ class ArtistItem extends HookWidget {
               const SizedBox(
                 width: 4,
               ),
-              Flexible(
+              Expanded(
                 child: Text(
                   artist.artistCaption,
                   maxLines: 1,
@@ -383,8 +387,8 @@ class ArtistItem extends HookWidget {
   }
 }
 
-class _CircleGradientBorder extends StatelessWidget {
-  const _CircleGradientBorder({
+class _CircleBorderContainer extends StatelessWidget {
+  const _CircleBorderContainer({
     super.key,
     required this.child,
   });
@@ -393,43 +397,33 @@ class _CircleGradientBorder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(2),
-      decoration: BoxDecoration(
-        gradient: const LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.red,
-            Colors.orange,
-            Colors.yellow,
-            Colors.greenAccent,
-          ],
-        ),
-        // image: DecorationImage(
-        //   image: NetworkImage(
-        //     artist.artistImage,
-        //   ),
-        //   fit: BoxFit.cover,
-        // ),
-        borderRadius: BorderRadius.circular(64),
-        // border: Border.all(
-        //   color: Theme.of(context).primaryColor,
-        //   width: 2,
-        // ),
-      ),
+    return AspectRatio(
+      aspectRatio: 1,
       child: Container(
+        padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.red,
+              Colors.orange,
+              Colors.yellow,
+              Colors.greenAccent,
+            ],
+          ),
+          borderRadius: BorderRadius.circular(64),
+        ),
+        child: Container(
+          padding: const EdgeInsets.all(2),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.background,
             borderRadius: BorderRadius.circular(64),
-            border: Border.all(
-              color: Colors.white,
-              width: 2,
-            )),
-        child: ClipOval(child: child),
-        // child: Image.network(
-        //   artist.artistImage,
-        //   fit: BoxFit.cover,
-        // ),
+          ),
+          child: ClipOval(
+            child: child,
+          ),
+        ),
       ),
     );
   }
