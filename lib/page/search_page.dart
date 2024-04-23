@@ -7,8 +7,6 @@ import 'package:instagram_ui/page/home_page.dart';
 import 'package:instagram_ui/page/post_page.dart';
 
 /// todo 上滑搜尋會動嗎？
-/// todo 不平均的分割畫面，不是傳統GridView
-/// https://api.flutter.dev/flutter/widgets/CustomMultiChildLayout-class.html
 class SearchPage extends StatelessWidget {
   const SearchPage({super.key});
 
@@ -20,14 +18,19 @@ class SearchPage extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: SearchBar(
-                elevation: MaterialStateProperty.all(0),
-                backgroundColor: MaterialStateProperty.all(Colors.black12),
-                leading: const Icon(
-                  Icons.search,
+              child: InkWell(
+                onTap: () => showSearch(context: context, delegate: SearchBarDelegate()),
+                child: IgnorePointer(
+                  child: SearchBar(
+                    elevation: MaterialStateProperty.all(0),
+                    backgroundColor: MaterialStateProperty.all(Colors.black12),
+                    leading: const Icon(
+                      Icons.search,
+                    ),
+                    hintText: "Search",
+                    hintStyle: MaterialStateProperty.all(Theme.of(context).textTheme.bodyMedium),
+                  ),
                 ),
-                hintText: "Search",
-                hintStyle: MaterialStateProperty.all(Theme.of(context).textTheme.bodyMedium),
               ),
             ),
             Expanded(
@@ -61,7 +64,59 @@ class SearchPage extends StatelessWidget {
   }
 }
 
-/// todo 放大效果在方形時不好看需要調整
+class SearchBarDelegate extends SearchDelegate<Artist> {
+  @override
+  List<Widget>? buildActions(BuildContext context) {
+    return [
+      IconButton(
+        onPressed: () {
+          query = "";
+        },
+        icon: const Icon(Icons.clear),
+      ),
+    ];
+  }
+
+  @override
+  Widget? buildLeading(BuildContext context) {
+    return const BackButton();
+  }
+
+  @override
+  Widget buildResults(BuildContext context) {
+    final results = artList.where((element) => element.authorName.toLowerCase().contains(query.toLowerCase())).toList();
+
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(results[index].authorName),
+          onTap: () {
+            close(context, results[index]);
+          },
+        );
+      },
+    );
+  }
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    final results = artList.where((element) => element.authorName.toLowerCase().contains(query.toLowerCase())).toList();
+
+    return ListView.builder(
+      itemCount: results.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(results[index].authorName),
+          onTap: () {
+            query = results[index].authorName;
+          },
+        );
+      },
+    );
+  }
+}
+
 class PostItem extends StatelessWidget {
   const PostItem(this.artist, {super.key});
 
@@ -70,7 +125,7 @@ class PostItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OpenContainer(
-      closedColor: Colors.transparent,
+      // closedColor: Colors.transparent,
       // closedColor: Theme.of(context).scaffoldBackgroundColor,
       closedShape: const RoundedRectangleBorder(),
       transitionType: ContainerTransitionType.fade,
