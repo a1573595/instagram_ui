@@ -117,6 +117,7 @@ class SearchBarDelegate extends SearchDelegate<Artist> {
   }
 }
 
+/// todo 放大效果在方形時不好看需要調整
 class PostItem extends StatelessWidget {
   const PostItem(this.artist, {super.key});
 
@@ -136,6 +137,9 @@ class PostItem extends StatelessWidget {
         artist.artistImage,
         fit: BoxFit.cover,
       ),
+
+      /// 正方形與長方形Shape???
+      // openShape: ,
       openBuilder: (context, _) => PostPage(artist),
     );
   }

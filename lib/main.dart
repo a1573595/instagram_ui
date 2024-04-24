@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:instagram_ui/page/account_page.dart';
-import 'package:instagram_ui/page/add_page.dart';
 import 'package:instagram_ui/page/favorite_page.dart';
 import 'package:instagram_ui/page/home_page.dart';
 import 'package:instagram_ui/page/search_page.dart';
+import 'package:instagram_ui/page/video_page.dart';
 
 void main() {
   runApp(ProviderScope(
@@ -41,7 +41,7 @@ class ViewPagerPage extends HookConsumerWidget {
         children: const [
           HomePage(),
           SearchPage(),
-          AddPage(),
+          VideoPage(),
           FavoritePage(),
           AccountPage(),
         ],
@@ -64,7 +64,7 @@ class _BottomNavigationBarItem extends ConsumerWidget {
       items: const [
         BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
         BottomNavigationBarItem(icon: Icon(Icons.search), label: "Search"),
-        BottomNavigationBarItem(icon: Icon(Icons.add_circle_outlined), label: "Add"),
+        BottomNavigationBarItem(icon: Icon(Icons.video_collection_rounded), label: "Video"),
         BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Favorite"),
         BottomNavigationBarItem(icon: Icon(Icons.account_circle), label: "Account"),
       ],
