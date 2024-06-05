@@ -1,16 +1,14 @@
 # instagram_ui
 
-A new Flutter project.
+A sample instagram UI power by Flutter.
 
-## Getting Started
+## 🎨 Layout
+<div style="display:flex">
+    <img src="https://github.com/a1573595/instagram_ui/assets/25738593/c42cac13-ba44-4c89-980b-d41df3410489" width="30%">  
+    <img src="https://github.com/a1573595/instagram_ui/assets/25738593/dd15d4bb-eed8-4882-9dd7-fee6ae3a090e" width="30%">
+</div>
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<div style="display:flex">
+    <img src="https://github.com/a1573595/instagram_ui/assets/25738593/5620114f-f5b3-4a6f-a87e-8379d91accc6" width="30%">  
+    <img src="https://github.com/a1573595/instagram_ui/assets/25738593/fab602de-d74a-4086-9f80-df86204c47b6" width="30%">
+</div>
